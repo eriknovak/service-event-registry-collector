@@ -46,7 +46,7 @@ To run the service one must provide the following parameters.
 | ------------------ | -------- | ---------------------------------------------------------------------------------------------------------- |
 | api_key            | False    | The Event Registry API key                                                                                 |
 | max_repeat_request | True     | The maximum number of repeated requests. If the values is -1, it repeats indefinetely (Default: -1)        |
-| {action}           | False    | The action to execute. Options: [articles](#articles), [events](#events), [event_articles](#event_articles), [event_articles_from_list](#event_articles_from_list) |
+| {action}           | False    | The action to execute. Options: [articles](#articles), [events](#events), [event_articles](#event_articles), [event_articles_from_file](#event_articles_from_file) |
 
 
 
