@@ -1,5 +1,5 @@
 # Event Registry Collector
-This project allows users to collect the news articles and event via the [Event Registry](https://eventregistry.org) service from the command line. The source code is stored within the [event_registry](./event_registry) folder.
+This project allows users to collect the news articles and event via the [Event Registry](https://eventregistry.org) service from the command line. The source code is stored within the [collector](./collector) folder.
 
 ## Prerequisites
 
