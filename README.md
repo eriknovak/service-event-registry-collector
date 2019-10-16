@@ -5,7 +5,7 @@ This project allows users to collect the news articles and event via the [Event 
 
 - Install Python 3.x or higher
 - Create a new python environment to store the project dependencies via
-    `virtualenv` or `Conda` (optional, but recommended)
+    `virtualenv` or `anaconda` (optional, but recommended)
 
     - virtualenv
         ```bash
