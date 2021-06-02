@@ -1,5 +1,6 @@
 # Event Registry Collector
-This project allows users to collect the news articles and event via the [Event Registry](https://eventregistry.org) service from the command line. The source code is stored within the [collector](./collector) folder.
+This project allows users to collect the news articles and event via the [Event Registry](https://eventregistry.org)
+service from the command line. The source code is stored within the [collector](./collector) folder.
 
 ## Prerequisites
 
@@ -76,7 +77,14 @@ This `{action}` is used to acquire news articles. To acquire them one can provid
 An example of the `articles` action command is presented bellow.
 
 ```bash
-python -m collector --max_repeat_request=5 articles --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_articles.json
+python -m collector \
+    --max_repeat_request=5 \
+    articles \
+    --keywords="Barrack Obama,Donald Trump" \
+    --languages=eng,slv \
+    --date_start=2019-01-01 \
+    --max_items=10 \
+    --save_to_file=./data/barrack_trump_articles.json
 ```
 
 
@@ -101,7 +109,14 @@ This `{action}` is used to acquire news events. To acquire them one can provide 
 An example of the `events` action command is presented bellow.
 
 ```bash
-python -m collector --max_repeat_request=5 events --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_events.json
+python -m collector \
+    --max_repeat_request=5 \
+    events \
+    --keywords="Barrack Obama,Donald Trump" \
+    --languages=eng,slv \
+    --date_start=2019-01-01 \
+    --max_items=10 \
+    --save_to_file=./data/barrack_trump_events.json
 ```
 
 
@@ -127,7 +142,12 @@ This `{action}` is used to acquire news articles clustered in a certain event. T
 An example of the `event_articles` action command is presented bellow.
 
 ```bash
-python -m collector --max_repeat_request=5 event_articles --event_id=eng-2940883 --max_items=10 --save_to_file=./data/eng-2940883.json
+python -m collector \
+    --max_repeat_request=5 \
+    event_articles \
+    --event_id=eng-2940883 \
+    --max_items=10 \
+    --save_to_file=./data/eng-2940883.json
 ```
 
 
@@ -155,8 +175,20 @@ An example of the `event_articles_from_file` action command is presented bellow.
 
 ```bash
 # first collect some events of a certain topic
-python -m collector --max_repeat_request=5 events --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_events.json
+python -m collector \
+    --max_repeat_request=5 \
+    events \
+    --keywords="Barrack Obama,Donald Trump" \
+    --languages=eng,slv \
+    --date_start=2019-01-01 \
+    --max_items=10 \
+    --save_to_file=./data/barrack_trump_events.json
 
 # afterwards leverage the collected events for acquiring the event articles
-python -m collector --max_repeat_request=5 event_articles_from_file --event_ids_file=./data/barrack_trump_events.json --max_items=10 --save_to_file=./data/barrack_trump_events
+python -m collector \
+    --max_repeat_request=5 \
+    event_articles_from_file \
+    --event_ids_file=./data/barrack_trump_events.json \
+    --max_items=10 \
+    --save_to_file=./data/barrack_trump_events
 ```
