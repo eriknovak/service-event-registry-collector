@@ -116,7 +116,7 @@ python -m collector \
     --languages=eng,slv \
     --date_start=2019-01-01 \
     --max_items=10 \
-    --save_to_file=./data/barrack_trump_events.json
+    --save_to_file=./data/barrack_trump_events.jsonl
 ```
 
 
@@ -182,13 +182,13 @@ python -m collector \
     --languages=eng,slv \
     --date_start=2019-01-01 \
     --max_items=10 \
-    --save_to_file=./data/barrack_trump_events.json
+    --save_to_file=./data/barrack_trump_events.jsonl
 
 # afterwards leverage the collected events for acquiring the event articles
 python -m collector \
     --max_repeat_request=5 \
     event_articles_from_file \
-    --event_ids_file=./data/barrack_trump_events.json \
+    --event_ids_file=./data/barrack_trump_events.jsonl \
     --max_items=10 \
     --save_to_file=./data/barrack_trump_events
 ```
