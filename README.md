@@ -37,6 +37,12 @@ This project allows users to collect the news articles and event via the [Event 
     pip install -r requirements.txt
     ```
 
+- Create a `.env` file in the root of the project and insert the event registry API key
+    ```bash
+    # create the .env file with the API key as the content
+    echo "API_KEY={insert-er-api-key}" > .env
+    ```
+
 
 ## Event Registry Collector Service
 
@@ -44,7 +50,6 @@ To run the service one must provide the following parameters.
 
 | Name               | Optional | Description                                                                                                |
 | ------------------ | -------- | ---------------------------------------------------------------------------------------------------------- |
-| api_key            | False    | The Event Registry API key                                                                                 |
 | max_repeat_request | True     | The maximum number of repeated requests. If the values is -1, it repeats indefinetely (Default: -1)        |
 | {action}           | False    | The action to execute. Options: [articles](#articles), [events](#events), [event_articles](#event_articles), [event_articles_from_file](#event_articles_from_file) |
 
@@ -71,7 +76,7 @@ This `{action}` is used to acquire news articles. To acquire them one can provid
 An example of the `articles` action command is presented bellow.
 
 ```bash
-python -m collector --api_key={event-registry-api-key} --max_repeat_request=5 articles --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_articles.json
+python -m collector --max_repeat_request=5 articles --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_articles.json
 ```
 
 
@@ -96,7 +101,7 @@ This `{action}` is used to acquire news events. To acquire them one can provide 
 An example of the `events` action command is presented bellow.
 
 ```bash
-python -m collector --api_key={event-registry-api-key} --max_repeat_request=5 events --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_events.json
+python -m collector --max_repeat_request=5 events --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_events.json
 ```
 
 
@@ -122,7 +127,7 @@ This `{action}` is used to acquire news articles clustered in a certain event. T
 An example of the `event_articles` action command is presented bellow.
 
 ```bash
-python -m collector --api_key={event-registry-api-key} --max_repeat_request=5 event_articles --event_id=eng-2940883 --max_items=10 --save_to_file=./data/eng-2940883.json
+python -m collector --max_repeat_request=5 event_articles --event_id=eng-2940883 --max_items=10 --save_to_file=./data/eng-2940883.json
 ```
 
 
@@ -150,8 +155,8 @@ An example of the `event_articles_from_file` action command is presented bellow.
 
 ```bash
 # first collect some events of a certain topic
-python -m collector --api_key={event-registry-api-key} --max_repeat_request=5 events --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_events.json
+python -m collector --max_repeat_request=5 events --keywords="Barrack Obama,Donald Trump" --languages=eng,slv --date_start=2019-01-01 --max_items=10 --save_to_file=./data/barrack_trump_events.json
 
 # afterwards leverage the collected events for acquiring the event articles
-python -m collector --api_key={event-registry-api-key} --max_repeat_request=5 event_articles_from_file --event_ids_file=./data/barrack_trump_events.json --max_items=10 --save_to_file=./data/barrack_trump_events
+python -m collector --max_repeat_request=5 event_articles_from_file --event_ids_file=./data/barrack_trump_events.json --max_items=10 --save_to_file=./data/barrack_trump_events
 ```
