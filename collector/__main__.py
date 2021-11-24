@@ -30,7 +30,6 @@ def create_folder_directory(path):
     Args:
         path (str): The path to the given file.
     """
-
     # get the folder structure path
     normpath = os.path.normpath(path)
     split_path = normpath.split(os.sep)
@@ -50,7 +49,6 @@ def save_as_array(file, articles):
         articles (iter): The iterator with all of the acquired
             articles.
     """
-
     json.dump([a for a in articles], file)
 
 
@@ -62,7 +60,6 @@ def save_as_separate_line(file, articles):
         articles (iter): The iterator with all of the acquired
             articles.
     """
-
     for article in articles:
         try:
             # write the article json to the file
@@ -86,7 +83,6 @@ def save_result_in_file(articles, file_path, save_format=None):
                 None - The articles are stored line-by-line in the file.
 
     """
-
     # create the folder directory
     create_folder_directory(file_path)
     # store the events
@@ -155,7 +151,6 @@ class EventRegistryCollector:
                 (Default: -1)
 
         """
-
         # initialize the event registry instance
         self._er = ER.EventRegistry(
             apiKey=API_KEY, repeatFailedRequestCount=max_repeat_request
@@ -258,7 +253,6 @@ class EventRegistryCollector:
             Iterator: The iterator which goes through all retrieved articles.
 
         """
-
         # setup the event registry parameters
         er_keywords = ER.QueryItems.AND(keywords) if keywords else None
         er_concepts = (
@@ -364,7 +358,6 @@ class EventRegistryCollector:
             Iterator: The iterator which goes through all retrieved articles.
 
         """
-
         # setup the event registry parameters
         er_keywords = ER.QueryItems.AND(keywords) if keywords else None
         er_concepts = (
@@ -521,7 +514,6 @@ class EventRegistryCollector:
             Iterator: The iterator which goes through all retrieved articles.
 
         """
-
         # setup the event registry parameters
         er_keywords = ER.QueryItems.AND(keywords) if keywords else None
         er_concepts = (
@@ -622,7 +614,6 @@ class EventRegistryCollector:
                     None - The articles are stored line-by-line in the file.
 
         """
-
         # check if the event ids file exists
         if not (event_ids_file and os.path.isfile(event_ids_file)):
             raise Exception("get_event_articles_list: event_ids_file doesn't exist")

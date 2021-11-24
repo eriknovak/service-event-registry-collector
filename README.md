@@ -12,7 +12,7 @@ service from the command line. The source code is stored within the [collector](
   - venv
 
     ```bash
-    # create a new virual environment with the installed python
+    # create a new virtual environment with the installed python
     # and save it in the ./venv folder
     python -m venv ./venv
     # on windows: activate the virtual environment
