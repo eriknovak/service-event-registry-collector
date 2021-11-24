@@ -14,6 +14,7 @@ import sys
 import os
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
@@ -22,6 +23,7 @@ API_KEY = os.getenv("API_KEY")
 #######################################
 # Helper Functions
 #######################################
+
 
 def create_folder_directory(path):
     """Creates the folder structure associated with the `path`
@@ -88,9 +90,9 @@ def save_result_in_file(articles, file_path, save_format=None):
     # create the folder directory
     create_folder_directory(file_path)
     # store the events
-    with open(file_path, 'a') as f:
+    with open(file_path, "a") as f:
         # save the
-        if save_format == 'array':
+        if save_format == "array":
             save_as_array(f, articles)
         else:
             save_as_separate_line(f, articles)
@@ -100,10 +102,10 @@ def save_result_in_file(articles, file_path, save_format=None):
 # Main Classes
 #######################################
 
-class URI:
 
+class URI:
     def __init__(self, keyword, uri):
-        """ Initializes the keyword concept pair
+        """Initializes the keyword concept pair
             used then in the event registry collector class
 
         Args:
@@ -115,7 +117,6 @@ class URI:
         self.__keyword = keyword
         self.__uri = uri
 
-
     def get_keyword(self):
         """Gets the keyword value
 
@@ -124,7 +125,6 @@ class URI:
 
         """
         return self.__keyword
-
 
     def get_uri(self):
         """Gets the wikipedia concept
@@ -135,20 +135,16 @@ class URI:
         """
         return self.__uri
 
-
     def __eq__(self, other):
         """Compares if the instances are the same"""
         return self.__uri == other
-
 
     def __ne__(self, other):
         """Compares if the instances are not the same"""
         return not self == other
 
 
-
 class EventRegistryCollector:
-
     def __init__(self, max_repeat_request=-1):
         """Initializes the event registry collector
 
@@ -162,11 +158,9 @@ class EventRegistryCollector:
 
         # initialize the event registry instance
         self._er = ER.EventRegistry(
-            apiKey = API_KEY,
-            repeatFailedRequestCount = max_repeat_request
+            apiKey=API_KEY, repeatFailedRequestCount=max_repeat_request
         )
         self.MAX_EVENT_REQUESTS = 50
-
 
     def get_concepts(self, concepts):
         """Get the list of event registry concepts
@@ -182,7 +176,6 @@ class EventRegistryCollector:
         """
         return [URI(k, self._er.getConceptUri(k)) for k in concepts]
 
-
     def get_categories(self, categories):
         """Get the list of event registry concepts
 
@@ -196,7 +189,6 @@ class EventRegistryCollector:
 
         """
         return [URI(k, self._er.getCategoryUri(k)) for k in categories]
-
 
     def get_sources(self, sources):
         """Get the list of source uris
@@ -212,10 +204,21 @@ class EventRegistryCollector:
         """
         return [URI(k, self._er.getSourceUri(k)) for k in sources]
 
-
-    def get_articles(self, keywords=None, concepts=None, categories=None, sources=None,
-         languages=None, date_start=None, date_end=None, sort_by='date', sort_by_asc=False,
-         max_items=-1, save_to_file=None, save_format=None):
+    def get_articles(
+        self,
+        keywords=None,
+        concepts=None,
+        categories=None,
+        sources=None,
+        languages=None,
+        date_start=None,
+        date_end=None,
+        sort_by="date",
+        sort_by_asc=False,
+        max_items=-1,
+        save_to_file=None,
+        save_format=None,
+    ):
         """Get the event registry articles
 
         Args:
@@ -258,9 +261,21 @@ class EventRegistryCollector:
 
         # setup the event registry parameters
         er_keywords = ER.QueryItems.AND(keywords) if keywords else None
-        er_concepts = ER.QueryItems.AND([c.get_uri() for c in self.get_concepts(concepts)]) if concepts else None
-        er_categories = ER.QueryItems.AND([c.get_uri() for c in self.get_categories(categories)]) if categories else None
-        er_sources = ER.QueryItems.OR([c.get_uri() for c in self.get_sources(sources)]) if sources else None
+        er_concepts = (
+            ER.QueryItems.AND([c.get_uri() for c in self.get_concepts(concepts)])
+            if concepts
+            else None
+        )
+        er_categories = (
+            ER.QueryItems.AND([c.get_uri() for c in self.get_categories(categories)])
+            if categories
+            else None
+        )
+        er_sources = (
+            ER.QueryItems.OR([c.get_uri() for c in self.get_sources(sources)])
+            if sources
+            else None
+        )
         er_lang = ER.QueryItems.OR(languages) if languages else None
 
         # when saving to file check the last date and use it as start date
@@ -271,21 +286,23 @@ class EventRegistryCollector:
                 if len(lines) > 0:
                     last_article = json.loads(lines[-1])
                     # check if last event in right location
-                    date_start = last_article['date']
+                    date_start = last_article["date"]
 
         # creates the query articles object
         q = ER.QueryArticlesIter(
-            keywords = er_keywords,
-            conceptUri = er_concepts,
-            categoryUri = er_categories,
-            sourceUri = er_sources,
-            dateStart = date_start,
-            dateEnd = date_end,
-            lang = er_lang
+            keywords=er_keywords,
+            conceptUri=er_concepts,
+            categoryUri=er_categories,
+            sourceUri=er_sources,
+            dateStart=date_start,
+            dateEnd=date_end,
+            lang=er_lang,
         )
 
         # execute the query and return the iterator
-        articles = q.execQuery(self._er, sortBy=sort_by, sortByAsc=sort_by_asc, maxItems=max_items)
+        articles = q.execQuery(
+            self._er, sortBy=sort_by, sortByAsc=sort_by_asc, maxItems=max_items
+        )
 
         if save_to_file:
             save_result_in_file(articles, save_to_file, save_format)
@@ -293,10 +310,21 @@ class EventRegistryCollector:
         # return the articles for other use
         return articles
 
-
-    def get_events(self, keywords=None, concepts=None, categories=None, sources=None,
-         languages=None, date_start=None, date_end=None, sort_by='date', sort_by_asc=False,
-         max_items=-1, save_to_file=None, save_format=None):
+    def get_events(
+        self,
+        keywords=None,
+        concepts=None,
+        categories=None,
+        sources=None,
+        languages=None,
+        date_start=None,
+        date_end=None,
+        sort_by="date",
+        sort_by_asc=False,
+        max_items=-1,
+        save_to_file=None,
+        save_format=None,
+    ):
         """Get the event registry events
 
         Args:
@@ -339,9 +367,21 @@ class EventRegistryCollector:
 
         # setup the event registry parameters
         er_keywords = ER.QueryItems.AND(keywords) if keywords else None
-        er_concepts = ER.QueryItems.AND([c.get_uri() for c in self.get_concepts(concepts)]) if concepts else None
-        er_categories = ER.QueryItems.AND([c.get_uri() for c in self.get_categories(categories)]) if categories else None
-        er_sources = ER.QueryItems.OR([c.get_uri() for c in self.get_sources(sources)]) if sources else None
+        er_concepts = (
+            ER.QueryItems.AND([c.get_uri() for c in self.get_concepts(concepts)])
+            if concepts
+            else None
+        )
+        er_categories = (
+            ER.QueryItems.AND([c.get_uri() for c in self.get_categories(categories)])
+            if categories
+            else None
+        )
+        er_sources = (
+            ER.QueryItems.OR([c.get_uri() for c in self.get_sources(sources)])
+            if sources
+            else None
+        )
         er_lang = ER.QueryItems.OR(languages) if languages else None
 
         # when saving to file check the last date and use it as start date
@@ -352,21 +392,23 @@ class EventRegistryCollector:
                 if len(lines) > 0:
                     last_article = json.loads(lines[-1])
                     # check if last event in right location
-                    date_start = last_article['eventDate']
+                    date_start = last_article["eventDate"]
 
         # creates the query articles object
         q = ER.QueryEventsIter(
-            keywords = er_keywords,
-            conceptUri = er_concepts,
-            categoryUri = er_categories,
-            sourceUri = er_sources,
-            dateStart = date_start,
-            dateEnd = date_end,
-            lang = er_lang
+            keywords=er_keywords,
+            conceptUri=er_concepts,
+            categoryUri=er_categories,
+            sourceUri=er_sources,
+            dateStart=date_start,
+            dateEnd=date_end,
+            lang=er_lang,
         )
 
         # execute the query and return the iterator
-        events = q.execQuery(self._er, sortBy=sort_by, sortByAsc=sort_by_asc, maxItems=max_items)
+        events = q.execQuery(
+            self._er, sortBy=sort_by, sortByAsc=sort_by_asc, maxItems=max_items
+        )
 
         if save_to_file:
             # saves the events into
@@ -374,7 +416,6 @@ class EventRegistryCollector:
 
         # return the events for other use
         return events
-
 
     def get_event(self, event_ids, save_to_file=None, save_format=None):
         """Get the events with the provided event IDs
@@ -402,18 +443,20 @@ class EventRegistryCollector:
             chunk_number = len(event_ids) % self.MAX_EVENT_REQUESTS
             for i in range(chunk_number + 1):
                 start = self.MAX_EVENT_REQUESTS * i
-                end   = self.MAX_EVENT_REQUESTS * (i + 1)
+                end = self.MAX_EVENT_REQUESTS * (i + 1)
                 query_queue.append(ER.QueryEvent(event_ids[start:end]))
         elif type(event_ids) is str:
             query_queue.append(ER.QueryEvent(event_ids))
         else:
-            raise Exception('get_event: event_ids is not a list or a string')
+            raise Exception("get_event: event_ids is not a list or a string")
 
         # go through the query queue and execute the requests
         events = []
         for query in query_queue:
             response = self._er.execQuery(query)
-            events.extend([obj['info'] for obj in list(response.values()) if 'info' in obj])
+            events.extend(
+                [obj["info"] for obj in list(response.values()) if "info" in obj]
+            )
 
         if save_to_file:
             save_result_in_file(events, save_to_file, save_format)
@@ -421,11 +464,22 @@ class EventRegistryCollector:
         # return the events for other use
         return events
 
-
-
-    def get_event_articles(self, event_id, keywords=None, concepts=None, categories=None,
-        sources=None, languages=None, date_start=None, date_end=None, sort_by='date',
-        sort_by_asc=False, max_items=-1, save_to_file=None, save_format=None):
+    def get_event_articles(
+        self,
+        event_id,
+        keywords=None,
+        concepts=None,
+        categories=None,
+        sources=None,
+        languages=None,
+        date_start=None,
+        date_end=None,
+        sort_by="date",
+        sort_by_asc=False,
+        max_items=-1,
+        save_to_file=None,
+        save_format=None,
+    ):
         """Get the articles of a certain event
 
         Args:
@@ -470,25 +524,39 @@ class EventRegistryCollector:
 
         # setup the event registry parameters
         er_keywords = ER.QueryItems.AND(keywords) if keywords else None
-        er_concepts = ER.QueryItems.AND([c.get_uri() for c in self.get_concepts(concepts)]) if concepts else None
-        er_categories = ER.QueryItems.AND([c.get_uri() for c in self.get_categories(categories)]) if categories else None
-        er_sources = ER.QueryItems.OR([c.get_uri() for c in self.get_sources(sources)]) if sources else None
+        er_concepts = (
+            ER.QueryItems.AND([c.get_uri() for c in self.get_concepts(concepts)])
+            if concepts
+            else None
+        )
+        er_categories = (
+            ER.QueryItems.AND([c.get_uri() for c in self.get_categories(categories)])
+            if categories
+            else None
+        )
+        er_sources = (
+            ER.QueryItems.OR([c.get_uri() for c in self.get_sources(sources)])
+            if sources
+            else None
+        )
         er_lang = ER.QueryItems.OR(languages) if languages else None
 
         # creates the query event articles object
         q = ER.QueryEventArticlesIter(
             event_id,
-            keywords = er_keywords,
-            conceptUri = er_concepts,
-            categoryUri = er_categories,
-            sourceUri = er_sources,
-            dateStart = date_start,
-            dateEnd = date_end,
-            lang = er_lang
+            keywords=er_keywords,
+            conceptUri=er_concepts,
+            categoryUri=er_categories,
+            sourceUri=er_sources,
+            dateStart=date_start,
+            dateEnd=date_end,
+            lang=er_lang,
         )
 
         # execute the query and return the iterator
-        articles = q.execQuery(self._er, sortBy=sort_by, sortByAsc=sort_by_asc, maxItems=max_items)
+        articles = q.execQuery(
+            self._er, sortBy=sort_by, sortByAsc=sort_by_asc, maxItems=max_items
+        )
 
         if save_to_file:
             # saves the articles into
@@ -497,11 +565,23 @@ class EventRegistryCollector:
         # return the articles for other use
         return articles
 
-
-    def get_event_articles_from_file(self, event_ids_file, event_file_type='events',
-        keywords=None, concepts=None, categories=None, sources=None, languages=None,
-        date_start=None, date_end=None, sort_by='date', sort_by_asc=False, max_items=-1,
-        save_to_folder=None, save_format=None):
+    def get_event_articles_from_file(
+        self,
+        event_ids_file,
+        event_file_type="events",
+        keywords=None,
+        concepts=None,
+        categories=None,
+        sources=None,
+        languages=None,
+        date_start=None,
+        date_end=None,
+        sort_by="date",
+        sort_by_asc=False,
+        max_items=-1,
+        save_to_folder=None,
+        save_format=None,
+    ):
         """Gets the event articles from a list of event ids stored in a
             separate file and store them in their own event json file.
 
@@ -544,22 +624,22 @@ class EventRegistryCollector:
         """
 
         # check if the event ids file exists
-        if not(event_ids_file and os.path.isfile(event_ids_file)):
-            raise Exception('get_event_articles_list: event_ids_file doesn\'t exist')
+        if not (event_ids_file and os.path.isfile(event_ids_file)):
+            raise Exception("get_event_articles_list: event_ids_file doesn't exist")
 
         # open the file with the given event ids
         event_ids = []
-        with open(event_ids_file, 'r') as f:
+        with open(event_ids_file, "r") as f:
             lines = f.readlines()
 
             if len(lines) == 0:
-                raise Exception('get_event_articles_list: event_ids_file is empty')
+                raise Exception("get_event_articles_list: event_ids_file is empty")
 
-            if event_file_type == 'events':
+            if event_file_type == "events":
                 # the file contains whole event objects, extract only the ids
                 for line in lines:
                     line = json.loads(line)
-                    event_ids.append(line['uri'].strip())
+                    event_ids.append(line["uri"].strip())
             else:
                 # each line of the file is a separate event id
                 for line in lines:
@@ -569,134 +649,383 @@ class EventRegistryCollector:
 
         for event_id in event_ids:
             # setup the event path
-            event_path = "{}/{}.json".format(save_to_folder, event_id) if save_to_folder else None
+            event_path = (
+                "{}/{}.json".format(save_to_folder, event_id)
+                if save_to_folder
+                else None
+            )
 
             # get the event articles
-            articles = self.get_event_articles(event_id, keywords, concepts,
-                categories, sources, languages, date_start, date_end, sort_by,
-                sort_by_asc, max_items, event_path, save_format)
+            articles = self.get_event_articles(
+                event_id,
+                keywords,
+                concepts,
+                categories,
+                sources,
+                languages,
+                date_start,
+                date_end,
+                sort_by,
+                sort_by_asc,
+                max_items,
+                event_path,
+                save_format,
+            )
 
             # store the articles and the event id
-            event_articles.append({
-                "event_id": event_id,
-                "articles": articles
-            })
+            event_articles.append({"event_id": event_id, "articles": articles})
 
         # return the list of event articles
         return event_articles
 
 
-
-if __name__=='__main__':
+if __name__ == "__main__":
     # parse command line arguments
-    argparser = argparse.ArgumentParser(description="Service for retrieving event registry articles")
+    argparser = argparse.ArgumentParser(
+        description="Service for retrieving event registry articles"
+    )
 
-    argparser.add_argument('--max_repeat_request', type=int, default=-1,   help="The maximum number of repeated requests")
+    argparser.add_argument(
+        "--max_repeat_request",
+        type=int,
+        default=-1,
+        help="The maximum number of repeated requests",
+    )
 
-    subparsers = argparser.add_subparsers(help='command')
+    subparsers = argparser.add_subparsers(help="command")
 
     ###################################
     # Articles Query
     ###################################
 
-    argparser_articles = subparsers.add_parser('articles', help="Collects the articles based on some parameters")
-    argparser_articles.set_defaults(action='articles')
+    argparser_articles = subparsers.add_parser(
+        "articles", help="Collects the articles based on some parameters"
+    )
+    argparser_articles.set_defaults(action="articles")
     # query related attributes
-    argparser_articles.add_argument('--keywords',     type=str,  default=None,   help="The comma separated keywords the articles should contain")
-    argparser_articles.add_argument('--concepts',     type=str,  default=None,   help="The comma separated concepts the articles should be associated with")
-    argparser_articles.add_argument('--categories',   type=str,  default=None,   help="The comma separated categories of the collected articles")
-    argparser_articles.add_argument('--sources',      type=str,  default=None,   help="The comma separated media sources that published the articles")
-    argparser_articles.add_argument('--languages',    type=str,  default=None,   help="The comma separated languages of the articles")
-    argparser_articles.add_argument('--date_start',   type=str,  default=None,   help="The start date of the articles")
-    argparser_articles.add_argument('--date_end',     type=str,  default=None,   help="The end date of the articles")
+    argparser_articles.add_argument(
+        "--keywords",
+        type=str,
+        default=None,
+        help="The comma separated keywords the articles should contain",
+    )
+    argparser_articles.add_argument(
+        "--concepts",
+        type=str,
+        default=None,
+        help="The comma separated concepts the articles should be associated with",
+    )
+    argparser_articles.add_argument(
+        "--categories",
+        type=str,
+        default=None,
+        help="The comma separated categories of the collected articles",
+    )
+    argparser_articles.add_argument(
+        "--sources",
+        type=str,
+        default=None,
+        help="The comma separated media sources that published the articles",
+    )
+    argparser_articles.add_argument(
+        "--languages",
+        type=str,
+        default=None,
+        help="The comma separated languages of the articles",
+    )
+    argparser_articles.add_argument(
+        "--date_start", type=str, default=None, help="The start date of the articles"
+    )
+    argparser_articles.add_argument(
+        "--date_end", type=str, default=None, help="The end date of the articles"
+    )
     # data retrieving attributes
-    argparser_articles.add_argument('--sort_by',      type=str,  default='date', help="The sort order of articles")
-    argparser_articles.add_argument('--sort_by_asc',  type=bool, default=True,   help="The direction of the sort")
-    argparser_articles.add_argument('--max_items',    type=int,  default=-1,     help="The number of articles to collect")
+    argparser_articles.add_argument(
+        "--sort_by", type=str, default="date", help="The sort order of articles"
+    )
+    argparser_articles.add_argument(
+        "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
+    )
+    argparser_articles.add_argument(
+        "--max_items", type=int, default=-1, help="The number of articles to collect"
+    )
     # data storing values
-    argparser_articles.add_argument('--save_to_file', type=str,  default=None,   help="The path to the file to store the articles")
-    argparser_articles.add_argument('--save_format',  type=str,  default=None,   help="The format in which to store the articles")
+    argparser_articles.add_argument(
+        "--save_to_file",
+        type=str,
+        default=None,
+        help="The path to the file to store the articles",
+    )
+    argparser_articles.add_argument(
+        "--save_format",
+        type=str,
+        default=None,
+        help="The format in which to store the articles",
+    )
 
     ###################################
     # Events Query
     ###################################
 
-    argparser_events = subparsers.add_parser('events', help="Collects the events based on some parameters")
-    argparser_events.set_defaults(action='events')
+    argparser_events = subparsers.add_parser(
+        "events", help="Collects the events based on some parameters"
+    )
+    argparser_events.set_defaults(action="events")
     # query related attributes
-    argparser_events.add_argument('--keywords',     type=str,  default=None,   help="The comma separated keywords the events should contain")
-    argparser_events.add_argument('--concepts',     type=str,  default=None,   help="The comma separated concepts the events should be associated with")
-    argparser_events.add_argument('--categories',   type=str,  default=None,   help="The comma separated categories of the collected events")
-    argparser_events.add_argument('--sources',      type=str,  default=None,   help="The comma separated media sources that published the events")
-    argparser_events.add_argument('--languages',    type=str,  default=None,   help="The comma separated languages of the events")
-    argparser_events.add_argument('--date_start',   type=str,  default=None,   help="The start date of the events")
-    argparser_events.add_argument('--date_end',     type=str,  default=None,   help="The end date of the events")
+    argparser_events.add_argument(
+        "--keywords",
+        type=str,
+        default=None,
+        help="The comma separated keywords the events should contain",
+    )
+    argparser_events.add_argument(
+        "--concepts",
+        type=str,
+        default=None,
+        help="The comma separated concepts the events should be associated with",
+    )
+    argparser_events.add_argument(
+        "--categories",
+        type=str,
+        default=None,
+        help="The comma separated categories of the collected events",
+    )
+    argparser_events.add_argument(
+        "--sources",
+        type=str,
+        default=None,
+        help="The comma separated media sources that published the events",
+    )
+    argparser_events.add_argument(
+        "--languages",
+        type=str,
+        default=None,
+        help="The comma separated languages of the events",
+    )
+    argparser_events.add_argument(
+        "--date_start", type=str, default=None, help="The start date of the events"
+    )
+    argparser_events.add_argument(
+        "--date_end", type=str, default=None, help="The end date of the events"
+    )
     # data retrieving attributes
-    argparser_events.add_argument('--sort_by',      type=str,  default='date', help="The sort order of events")
-    argparser_events.add_argument('--sort_by_asc',  type=bool, default=True,   help="The direction of the sort")
-    argparser_events.add_argument('--max_items',    type=int,  default=-1,     help="The number of events to collect")
+    argparser_events.add_argument(
+        "--sort_by", type=str, default="date", help="The sort order of events"
+    )
+    argparser_events.add_argument(
+        "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
+    )
+    argparser_events.add_argument(
+        "--max_items", type=int, default=-1, help="The number of events to collect"
+    )
     # data storing values
-    argparser_events.add_argument('--save_to_file', type=str,  default=None,   help="The path to the file to store the events")
-    argparser_events.add_argument('--save_format',  type=str,  default=None,   help="The format in which to store the events")
+    argparser_events.add_argument(
+        "--save_to_file",
+        type=str,
+        default=None,
+        help="The path to the file to store the events",
+    )
+    argparser_events.add_argument(
+        "--save_format",
+        type=str,
+        default=None,
+        help="The format in which to store the events",
+    )
 
     ###################################
     # Event Query
     ###################################
 
-    argparser_events = subparsers.add_parser('event', help="Collects the events based on some parameters")
-    argparser_events.set_defaults(action='event')
+    argparser_events = subparsers.add_parser(
+        "event", help="Collects the events based on some parameters"
+    )
+    argparser_events.set_defaults(action="event")
     # query related attributes
-    argparser_events.add_argument('--event_ids',    type=str,  default=None, help="The comma sperated event ids")
+    argparser_events.add_argument(
+        "--event_ids", type=str, default=None, help="The comma sperated event ids"
+    )
     # data storing values
-    argparser_events.add_argument('--save_to_file', type=str,  default=None, help="The path to the file to store the events")
-    argparser_events.add_argument('--save_format',  type=str,  default=None, help="The format in which to store the events")
+    argparser_events.add_argument(
+        "--save_to_file",
+        type=str,
+        default=None,
+        help="The path to the file to store the events",
+    )
+    argparser_events.add_argument(
+        "--save_format",
+        type=str,
+        default=None,
+        help="The format in which to store the events",
+    )
 
     ###################################
     # Event Articles Query
     ###################################
 
-    argparser_events = subparsers.add_parser('event_articles', help="Collects the event articles based on some parameters")
-    argparser_events.set_defaults(action='event_articles')
+    argparser_events = subparsers.add_parser(
+        "event_articles", help="Collects the event articles based on some parameters"
+    )
+    argparser_events.set_defaults(action="event_articles")
     # query related attributes
-    argparser_events.add_argument('--event_id',     type=str,  default=None,  help="The event id of the event for which we wish the articles")
-    argparser_events.add_argument('--keywords',     type=str,  default=None,  help="The comma separated keywords the event articles should contain")
-    argparser_events.add_argument('--concepts',     type=str,  default=None,  help="The comma separated concepts the event articles should be associated with")
-    argparser_events.add_argument('--categories',   type=str,  default=None,  help="The comma separated categories of the collected event articles")
-    argparser_events.add_argument('--sources',      type=str,  default=None,  help="The comma separated media sources that published the event articles")
-    argparser_events.add_argument('--languages',    type=str,  default=None,  help="The comma separated languages of the event articles")
-    argparser_events.add_argument('--date_start',   type=str,  default=None,  help="The start date of the event articles")
-    argparser_events.add_argument('--date_end',     type=str,  default=None,  help="The end date of the event articles")
+    argparser_events.add_argument(
+        "--event_id",
+        type=str,
+        default=None,
+        help="The event id of the event for which we wish the articles",
+    )
+    argparser_events.add_argument(
+        "--keywords",
+        type=str,
+        default=None,
+        help="The comma separated keywords the event articles should contain",
+    )
+    argparser_events.add_argument(
+        "--concepts",
+        type=str,
+        default=None,
+        help="The comma separated concepts the event articles should be associated with",
+    )
+    argparser_events.add_argument(
+        "--categories",
+        type=str,
+        default=None,
+        help="The comma separated categories of the collected event articles",
+    )
+    argparser_events.add_argument(
+        "--sources",
+        type=str,
+        default=None,
+        help="The comma separated media sources that published the event articles",
+    )
+    argparser_events.add_argument(
+        "--languages",
+        type=str,
+        default=None,
+        help="The comma separated languages of the event articles",
+    )
+    argparser_events.add_argument(
+        "--date_start",
+        type=str,
+        default=None,
+        help="The start date of the event articles",
+    )
+    argparser_events.add_argument(
+        "--date_end", type=str, default=None, help="The end date of the event articles"
+    )
     # data retrieving attributes
-    argparser_events.add_argument('--sort_by',      type=str,  default='rel', help="The sort order of event articles")
-    argparser_events.add_argument('--sort_by_asc',  type=bool, default=True,  help="The direction of the sort")
-    argparser_events.add_argument('--max_items',    type=int,  default=-1,    help="The number of event articles to collect")
+    argparser_events.add_argument(
+        "--sort_by", type=str, default="rel", help="The sort order of event articles"
+    )
+    argparser_events.add_argument(
+        "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
+    )
+    argparser_events.add_argument(
+        "--max_items",
+        type=int,
+        default=-1,
+        help="The number of event articles to collect",
+    )
     # data storing values
-    argparser_events.add_argument('--save_to_file', type=str,  default=None,  help="The path to the file to store the event articles")
-    argparser_events.add_argument('--save_format',  type=str,  default=None,  help="The format in which to store the event articles")
+    argparser_events.add_argument(
+        "--save_to_file",
+        type=str,
+        default=None,
+        help="The path to the file to store the event articles",
+    )
+    argparser_events.add_argument(
+        "--save_format",
+        type=str,
+        default=None,
+        help="The format in which to store the event articles",
+    )
 
     ###################################
     # Event Articles List Query
     ###################################
 
-    argparser_events = subparsers.add_parser('event_articles_from_file', help="Collects the event articles from a file and based on some parameters")
-    argparser_events.set_defaults(action='event_articles_from_file')
+    argparser_events = subparsers.add_parser(
+        "event_articles_from_file",
+        help="Collects the event articles from a file and based on some parameters",
+    )
+    argparser_events.set_defaults(action="event_articles_from_file")
     # query related attributes
-    argparser_events.add_argument('--event_ids_file',  type=str,  default=None,     help="The file which contains the event ids")
-    argparser_events.add_argument('--event_file_type', type=str,  default='events', help="The type of the event file type. Options: 'events', 'plain'")
-    argparser_events.add_argument('--keywords',        type=str,  default=None,     help="The comma separated keywords the event articles should contain")
-    argparser_events.add_argument('--concepts',        type=str,  default=None,     help="The comma separated concepts the event articles should be associated with")
-    argparser_events.add_argument('--categories',      type=str,  default=None,     help="The comma separated categories of the collected event articles")
-    argparser_events.add_argument('--sources',         type=str,  default=None,     help="The comma separated media sources that published the event articles")
-    argparser_events.add_argument('--languages',       type=str,  default=None,     help="The comma separated languages of the event articles")
-    argparser_events.add_argument('--date_start',      type=str,  default=None,     help="The start date of the event articles")
-    argparser_events.add_argument('--date_end',        type=str,  default=None,     help="The end date of the event articles")
+    argparser_events.add_argument(
+        "--event_ids_file",
+        type=str,
+        default=None,
+        help="The file which contains the event ids",
+    )
+    argparser_events.add_argument(
+        "--event_file_type",
+        type=str,
+        default="events",
+        help="The type of the event file type. Options: 'events', 'plain'",
+    )
+    argparser_events.add_argument(
+        "--keywords",
+        type=str,
+        default=None,
+        help="The comma separated keywords the event articles should contain",
+    )
+    argparser_events.add_argument(
+        "--concepts",
+        type=str,
+        default=None,
+        help="The comma separated concepts the event articles should be associated with",
+    )
+    argparser_events.add_argument(
+        "--categories",
+        type=str,
+        default=None,
+        help="The comma separated categories of the collected event articles",
+    )
+    argparser_events.add_argument(
+        "--sources",
+        type=str,
+        default=None,
+        help="The comma separated media sources that published the event articles",
+    )
+    argparser_events.add_argument(
+        "--languages",
+        type=str,
+        default=None,
+        help="The comma separated languages of the event articles",
+    )
+    argparser_events.add_argument(
+        "--date_start",
+        type=str,
+        default=None,
+        help="The start date of the event articles",
+    )
+    argparser_events.add_argument(
+        "--date_end", type=str, default=None, help="The end date of the event articles"
+    )
     # data retrieving attributes
-    argparser_events.add_argument('--sort_by',         type=str,  default='rel',   help="The sort order of event articles")
-    argparser_events.add_argument('--sort_by_asc',     type=bool, default=True,     help="The direction of the sort")
-    argparser_events.add_argument('--max_items',       type=int,  default=-1,       help="The number of event articles to collect")
+    argparser_events.add_argument(
+        "--sort_by", type=str, default="rel", help="The sort order of event articles"
+    )
+    argparser_events.add_argument(
+        "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
+    )
+    argparser_events.add_argument(
+        "--max_items",
+        type=int,
+        default=-1,
+        help="The number of event articles to collect",
+    )
     # data storing values
-    argparser_events.add_argument('--save_to_file',    type=str,  default=None,     help="The path to the folder to store the event articles files")
-    argparser_events.add_argument('--save_format',     type=str,  default=None,     help="The format in which to store the event articles")
+    argparser_events.add_argument(
+        "--save_to_file",
+        type=str,
+        default=None,
+        help="The path to the folder to store the event articles files",
+    )
+    argparser_events.add_argument(
+        "--save_format",
+        type=str,
+        default=None,
+        help="The format in which to store the event articles",
+    )
 
     try:
         # parse the arguments and call whatever function was selected
@@ -706,68 +1035,151 @@ if __name__=='__main__':
         max_repeat_request = args.max_repeat_request
 
         # query related attributes
-        keywords   = [k.strip() for k in args.keywords.split(',')]   if hasattr(args, 'keywords')   and args.keywords   else None
-        concepts   = [c.strip() for c in args.concepts.split(',')]   if hasattr(args, 'concepts')   and args.concepts   else None
-        categories = [c.strip() for c in args.categories.split(',')] if hasattr(args, 'categories') and args.categories else None
-        sources    = [s.strip() for s in args.sources.split(',')]    if hasattr(args, 'sources')    and args.sources    else None
-        languages  = [l.strip() for l in args.languages.split(',')]  if hasattr(args, 'languages')  and args.languages  else None
-        date_start = args.date_start if hasattr(args, 'date_start') and args.date_start else None
-        date_end   = args.date_end   if hasattr(args, 'date_end')   and args.date_end   else None
+        keywords = (
+            [k.strip() for k in args.keywords.split(",")]
+            if hasattr(args, "keywords") and args.keywords
+            else None
+        )
+        concepts = (
+            [c.strip() for c in args.concepts.split(",")]
+            if hasattr(args, "concepts") and args.concepts
+            else None
+        )
+        categories = (
+            [c.strip() for c in args.categories.split(",")]
+            if hasattr(args, "categories") and args.categories
+            else None
+        )
+        sources = (
+            [s.strip() for s in args.sources.split(",")]
+            if hasattr(args, "sources") and args.sources
+            else None
+        )
+        languages = (
+            [l.strip() for l in args.languages.split(",")]
+            if hasattr(args, "languages") and args.languages
+            else None
+        )
+        date_start = (
+            args.date_start if hasattr(args, "date_start") and args.date_start else None
+        )
+        date_end = (
+            args.date_end if hasattr(args, "date_end") and args.date_end else None
+        )
         # data retrieving attributes
-        sort_by     = args.sort_by                                              if hasattr(args, 'sort_by')     and args.sort_by     else None
-        sort_by_asc = args.sort_by_asc in [True, 'True', 'true', '1', 't', 'y'] if hasattr(args, 'sort_by_asc') and args.sort_by_asc else None
-        max_items   = args.max_items                                            if hasattr(args, 'max_items')   and args.max_items   else None
+        sort_by = args.sort_by if hasattr(args, "sort_by") and args.sort_by else None
+        sort_by_asc = (
+            args.sort_by_asc in [True, "True", "true", "1", "t", "y"]
+            if hasattr(args, "sort_by_asc") and args.sort_by_asc
+            else None
+        )
+        max_items = (
+            args.max_items if hasattr(args, "max_items") and args.max_items else None
+        )
         # data storing values
-        save_to_file = args.save_to_file if hasattr(args, 'save_to_file') and args.save_to_file else None
-        save_format  = args.save_format  if hasattr(args, 'save_format')  and args.save_format  else None
+        save_to_file = (
+            args.save_to_file
+            if hasattr(args, "save_to_file") and args.save_to_file
+            else None
+        )
+        save_format = (
+            args.save_format
+            if hasattr(args, "save_format") and args.save_format
+            else None
+        )
 
         # initialize and execute query
         er = EventRegistryCollector(max_repeat_request=max_repeat_request)
 
-        if args.action == 'articles':
+        if args.action == "articles":
             # execute the articles query
-            er.get_articles(keywords=keywords, concepts=concepts, categories=categories,
-                sources=sources, languages=languages, date_start=date_start, date_end=date_end,
-                sort_by=sort_by, sort_by_asc=sort_by_asc, max_items=max_items,
-                save_to_file=save_to_file, save_format=save_format)
+            er.get_articles(
+                keywords=keywords,
+                concepts=concepts,
+                categories=categories,
+                sources=sources,
+                languages=languages,
+                date_start=date_start,
+                date_end=date_end,
+                sort_by=sort_by,
+                sort_by_asc=sort_by_asc,
+                max_items=max_items,
+                save_to_file=save_to_file,
+                save_format=save_format,
+            )
 
-        elif args.action == 'events':
+        elif args.action == "events":
             # execute the events query
-            er.get_events(keywords=keywords, concepts=concepts, categories=categories,
-                sources=sources, languages=languages, date_start=date_start, date_end=date_end,
-                sort_by=sort_by, sort_by_asc=sort_by_asc, max_items=max_items,
-                save_to_file=save_to_file, save_format=save_format)
+            er.get_events(
+                keywords=keywords,
+                concepts=concepts,
+                categories=categories,
+                sources=sources,
+                languages=languages,
+                date_start=date_start,
+                date_end=date_end,
+                sort_by=sort_by,
+                sort_by_asc=sort_by_asc,
+                max_items=max_items,
+                save_to_file=save_to_file,
+                save_format=save_format,
+            )
 
-        elif args.action == 'event':
+        elif args.action == "event":
             if not args.event_ids:
-                raise Exception('Attribute event_ids must be specified')
+                raise Exception("Attribute event_ids must be specified")
 
             # get query specific information
-            event_ids = args.event_ids.split(',')
-            er.get_event(event_ids=event_ids, save_to_file=save_to_file, save_format=save_format)
+            event_ids = args.event_ids.split(",")
+            er.get_event(
+                event_ids=event_ids, save_to_file=save_to_file, save_format=save_format
+            )
 
-        elif args.action == 'event_articles':
+        elif args.action == "event_articles":
             # get query specific information
             event_id = args.event_id if args.event_id else None
             # execute the events query
-            er.get_event_articles(event_id, keywords=keywords, concepts=concepts, categories=categories,
-                sources=sources, languages=languages, date_start=date_start, date_end=date_end,
-                sort_by=sort_by, sort_by_asc=sort_by_asc, max_items=max_items,
-                save_to_file=save_to_file, save_format=save_format)
+            er.get_event_articles(
+                event_id,
+                keywords=keywords,
+                concepts=concepts,
+                categories=categories,
+                sources=sources,
+                languages=languages,
+                date_start=date_start,
+                date_end=date_end,
+                sort_by=sort_by,
+                sort_by_asc=sort_by_asc,
+                max_items=max_items,
+                save_to_file=save_to_file,
+                save_format=save_format,
+            )
 
-        elif args.action == 'event_articles_from_file':
+        elif args.action == "event_articles_from_file":
             # get query specific information
-            event_ids_file  = args.event_ids_file  if args.event_ids_file  else None
+            event_ids_file = args.event_ids_file if args.event_ids_file else None
             event_file_type = args.event_file_type if args.event_file_type else None
 
             # execute the events query
-            er.get_event_articles_from_file(event_ids_file, event_file_type=event_file_type, keywords=keywords,
-                concepts=concepts, categories=categories, sources=sources, languages=languages,
-                date_start=date_start, date_end=date_end, sort_by=sort_by, sort_by_asc=sort_by_asc,
-                max_items=max_items, save_to_folder=save_to_file, save_format=save_format)
+            er.get_event_articles_from_file(
+                event_ids_file,
+                event_file_type=event_file_type,
+                keywords=keywords,
+                concepts=concepts,
+                categories=categories,
+                sources=sources,
+                languages=languages,
+                date_start=date_start,
+                date_end=date_end,
+                sort_by=sort_by,
+                sort_by_asc=sort_by_asc,
+                max_items=max_items,
+                save_to_folder=save_to_file,
+                save_format=save_format,
+            )
 
         else:
-            raise Exception('Argument command is unknown: {}'.format(args.command))
+            raise Exception("Argument command is unknown: {}".format(args.command))
     except KeyboardInterrupt:
         try:
             sys.exit(0)
