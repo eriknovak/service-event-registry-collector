@@ -679,17 +679,10 @@ class EventRegistryCollector:
         return event_articles
 
 
-if __name__ == "__main__":
+def main() -> None:
     # parse command line arguments
     argparser = argparse.ArgumentParser(
         description="Service for retrieving event registry articles"
-    )
-
-    argparser.add_argument(
-        "--max_repeat_request",
-        type=int,
-        default=-1,
-        help="The maximum number of repeated requests",
     )
 
     subparsers = argparser.add_subparsers(help="command")
@@ -698,65 +691,73 @@ if __name__ == "__main__":
     # Articles Query
     ###################################
 
-    argparser_articles = subparsers.add_parser(
+    subparser = subparsers.add_parser(
         "articles", help="Collects the articles based on some parameters"
     )
-    argparser_articles.set_defaults(action="articles")
+    subparser.set_defaults(action="articles")
+
+    subparser.add_argument(
+        "--max_repeat_request",
+        type=int,
+        default=-1,
+        help="The maximum number of repeated requests",
+    )
+
     # query related attributes
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--keywords",
         type=str,
         default=None,
         help="The comma separated keywords the articles should contain",
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--concepts",
         type=str,
         default=None,
         help="The comma separated concepts the articles should be associated with",
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--categories",
         type=str,
         default=None,
         help="The comma separated categories of the collected articles",
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--sources",
         type=str,
         default=None,
         help="The comma separated media sources that published the articles",
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--languages",
         type=str,
         default=None,
         help="The comma separated languages of the articles",
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--date_start", type=str, default=None, help="The start date of the articles"
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--date_end", type=str, default=None, help="The end date of the articles"
     )
     # data retrieving attributes
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--sort_by", type=str, default="date", help="The sort order of articles"
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--max_items", type=int, default=-1, help="The number of articles to collect"
     )
     # data storing values
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--save_to_file",
         type=str,
         default=None,
         help="The path to the file to store the articles",
     )
-    argparser_articles.add_argument(
+    subparser.add_argument(
         "--save_format",
         type=str,
         default=None,
@@ -767,65 +768,73 @@ if __name__ == "__main__":
     # Events Query
     ###################################
 
-    argparser_events = subparsers.add_parser(
+    subparser = subparsers.add_parser(
         "events", help="Collects the events based on some parameters"
     )
-    argparser_events.set_defaults(action="events")
+    subparser.set_defaults(action="events")
+
+    subparser.add_argument(
+        "--max_repeat_request",
+        type=int,
+        default=-1,
+        help="The maximum number of repeated requests",
+    )
+
     # query related attributes
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--keywords",
         type=str,
         default=None,
         help="The comma separated keywords the events should contain",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--concepts",
         type=str,
         default=None,
         help="The comma separated concepts the events should be associated with",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--categories",
         type=str,
         default=None,
         help="The comma separated categories of the collected events",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sources",
         type=str,
         default=None,
         help="The comma separated media sources that published the events",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--languages",
         type=str,
         default=None,
         help="The comma separated languages of the events",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--date_start", type=str, default=None, help="The start date of the events"
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--date_end", type=str, default=None, help="The end date of the events"
     )
     # data retrieving attributes
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sort_by", type=str, default="date", help="The sort order of events"
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--max_items", type=int, default=-1, help="The number of events to collect"
     )
     # data storing values
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_to_file",
         type=str,
         default=None,
         help="The path to the file to store the events",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_format",
         type=str,
         default=None,
@@ -836,22 +845,30 @@ if __name__ == "__main__":
     # Event Query
     ###################################
 
-    argparser_events = subparsers.add_parser(
+    subparser = subparsers.add_parser(
         "event", help="Collects the events based on some parameters"
     )
-    argparser_events.set_defaults(action="event")
+    subparser.set_defaults(action="event")
+
+    subparser.add_argument(
+        "--max_repeat_request",
+        type=int,
+        default=-1,
+        help="The maximum number of repeated requests",
+    )
+
     # query related attributes
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--event_ids", type=str, default=None, help="The comma sperated event ids"
     )
     # data storing values
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_to_file",
         type=str,
         default=None,
         help="The path to the file to store the events",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_format",
         type=str,
         default=None,
@@ -862,77 +879,85 @@ if __name__ == "__main__":
     # Event Articles Query
     ###################################
 
-    argparser_events = subparsers.add_parser(
+    subparser = subparsers.add_parser(
         "event_articles", help="Collects the event articles based on some parameters"
     )
-    argparser_events.set_defaults(action="event_articles")
+    subparser.set_defaults(action="event_articles")
+
+    subparser.add_argument(
+        "--max_repeat_request",
+        type=int,
+        default=-1,
+        help="The maximum number of repeated requests",
+    )
+
     # query related attributes
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--event_id",
         type=str,
         default=None,
         help="The event id of the event for which we wish the articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--keywords",
         type=str,
         default=None,
         help="The comma separated keywords the event articles should contain",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--concepts",
         type=str,
         default=None,
         help="The comma separated concepts the event articles should be associated with",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--categories",
         type=str,
         default=None,
         help="The comma separated categories of the collected event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sources",
         type=str,
         default=None,
         help="The comma separated media sources that published the event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--languages",
         type=str,
         default=None,
         help="The comma separated languages of the event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--date_start",
         type=str,
         default=None,
         help="The start date of the event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--date_end", type=str, default=None, help="The end date of the event articles"
     )
     # data retrieving attributes
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sort_by", type=str, default="rel", help="The sort order of event articles"
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--max_items",
         type=int,
         default=-1,
         help="The number of event articles to collect",
     )
     # data storing values
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_to_file",
         type=str,
         default=None,
         help="The path to the file to store the event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_format",
         type=str,
         default=None,
@@ -943,84 +968,92 @@ if __name__ == "__main__":
     # Event Articles List Query
     ###################################
 
-    argparser_events = subparsers.add_parser(
+    subparser = subparsers.add_parser(
         "event_articles_from_file",
         help="Collects the event articles from a file and based on some parameters",
     )
-    argparser_events.set_defaults(action="event_articles_from_file")
+    subparser.set_defaults(action="event_articles_from_file")
+
+    subparser.add_argument(
+        "--max_repeat_request",
+        type=int,
+        default=-1,
+        help="The maximum number of repeated requests",
+    )
+
     # query related attributes
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--event_ids_file",
         type=str,
         default=None,
         help="The file which contains the event ids",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--event_file_type",
         type=str,
         default="events",
         help="The type of the event file type. Options: 'events', 'plain'",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--keywords",
         type=str,
         default=None,
         help="The comma separated keywords the event articles should contain",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--concepts",
         type=str,
         default=None,
         help="The comma separated concepts the event articles should be associated with",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--categories",
         type=str,
         default=None,
         help="The comma separated categories of the collected event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sources",
         type=str,
         default=None,
         help="The comma separated media sources that published the event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--languages",
         type=str,
         default=None,
         help="The comma separated languages of the event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--date_start",
         type=str,
         default=None,
         help="The start date of the event articles",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--date_end", type=str, default=None, help="The end date of the event articles"
     )
     # data retrieving attributes
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sort_by", type=str, default="rel", help="The sort order of event articles"
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--sort_by_asc", type=bool, default=True, help="The direction of the sort"
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--max_items",
         type=int,
         default=-1,
         help="The number of event articles to collect",
     )
     # data storing values
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_to_file",
         type=str,
         default=None,
         help="The path to the folder to store the event articles files",
     )
-    argparser_events.add_argument(
+    subparser.add_argument(
         "--save_format",
         type=str,
         default=None,
@@ -1185,3 +1218,7 @@ if __name__ == "__main__":
             sys.exit(0)
         except SystemExit:
             os._exit(0)
+
+
+if __name__ == "__main__":
+    main()
