@@ -1,0 +1,4 @@
+eventregistry==8.6.1
+requests
+urllib3
+python-dotenv
