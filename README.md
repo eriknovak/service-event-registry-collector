@@ -72,6 +72,7 @@ This `{action}` is used to acquire news articles. To acquire them one can provid
 | max_items          | True     | The number of articles to collect. If its -1, then there is no limit (Default: -1)                                                                                                                                 |
 | save_to_file       | True     | The path to the file to store the articles. If this parameter is provided, it checks the date of the last acquired article and replaces the date_start parameter with the date of the last article (Default: None) |
 | save_format        | True     | The format in which to store the articles. If `'array'`, it stores the articles into an array of objects. Otherwise, each line consists of one article object (Default: None)                                      |
+| verbose            | True     | If true, outputs the query parameters retrieved by Event Registry (Default: False)                                                                                                                                 |
 
 An example of the `articles` action command is presented bellow.
 
@@ -104,6 +105,7 @@ This `{action}` is used to acquire news events. To acquire them one can provide 
 | max_items          | True     | The number of events to collect. If its -1, then there is no limit (Default: -1)                                                                                                                                 |
 | save_to_file       | True     | The path to the file to store the events. If this parameter is provided, it checks the date of the last acquired article and replaces the date_start parameter with the date of the last article (Default: None) |
 | save_format        | True     | The format in which to store the events. If `'array'`, it stores the articles into an array of objects. Otherwise, each line consists of one article object (Default: None)                                      |
+| verbose            | True     | If true, outputs the query parameters retrieved by Event Registry (Default: False)                                                                                                                               |
 
 An example of the `events` action command is presented bellow.
 
@@ -137,6 +139,7 @@ This `{action}` is used to acquire news articles clustered in a certain event. T
 | max_items          | True     | The number of event articles to collect. If its -1, then there is no limit (Default: -1)                                                                                            |
 | save_to_file       | True     | The path to the file to store the event articles (Default: None)                                                                                                                    |
 | save_format        | True     | The format in which to store the event articles. If `'array'`, it stores the articles into an array of objects. Otherwise, each line consists of one article object (Default: None) |
+| verbose            | True     | If true, outputs the query parameters retrieved by Event Registry (Default: False)                                                                                                  |
 
 An example of the `event_articles` action command is presented bellow.
 
@@ -169,6 +172,7 @@ This `{action}` is used to acquire news articles of the events - where the event
 | max_items          | True     | The number of event articles to collect. If its -1, then there is no limit (Default: -1)                                                                                                                         |
 | save_to_file       | True     | The path to the **folder** to store the event articles (Default: None)                                                                                                                                           |
 | save_format        | True     | The format in which to store the event articles. If `'array'`, it stores the articles into an array of objects. Otherwise, each line consists of one article object (Default: None)                              |
+| verbose            | True     | If true, outputs the query parameters retrieved by Event Registry (Default: False)                                                                                                                               |
 
 An example of the `event_articles_from_file` action command is presented bellow.
 

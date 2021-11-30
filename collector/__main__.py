@@ -93,6 +93,31 @@ def save_result_in_file(articles, file_path, save_format=None):
         else:
             save_as_separate_line(f, articles)
 
+def get_items(obj: ER.QueryItems):
+    return obj.getItems() if obj else obj
+
+def print_query_params(params):
+    keywords = get_items(params["keywords"])
+    concepts = get_items(params["concepts"])
+    categories = get_items(params["categories"])
+    sources = get_items(params["sources"])
+    date_start = params["date_start"]
+    date_end = params["date_end"]
+    languages = params["languages"]
+
+    message = f"""
+        EVENT REGISTRY QUERY PARAMETERS
+            keywords:   {keywords}
+            concepts:   {concepts}
+            categories: {categories}
+            sources:    {sources}
+            date_start: {date_start}
+            date_ned:   {date_end}
+            languages:  {languages}
+    """
+
+    print(message)
+
 
 #######################################
 # Main Classes
@@ -213,6 +238,7 @@ class EventRegistryCollector:
         max_items=-1,
         save_to_file=None,
         save_format=None,
+        verbose=False
     ):
         """Get the event registry articles
 
@@ -282,6 +308,17 @@ class EventRegistryCollector:
                     # check if last event in right location
                     date_start = last_article["date"]
 
+        if verbose:
+            print_query_params({
+                "keywords": er_keywords,
+                "concepts": er_concepts,
+                "categories": er_categories,
+                "sources": er_sources,
+                "date_start": date_start,
+                "date_end": date_end,
+                "languages": languages
+            })
+
         # creates the query articles object
         q = ER.QueryArticlesIter(
             keywords=er_keywords,
@@ -318,6 +355,7 @@ class EventRegistryCollector:
         max_items=-1,
         save_to_file=None,
         save_format=None,
+        verbose=False
     ):
         """Get the event registry events
 
@@ -386,6 +424,17 @@ class EventRegistryCollector:
                     last_article = json.loads(lines[-1])
                     # check if last event in right location
                     date_start = last_article["eventDate"]
+
+        if verbose:
+            print_query_params({
+                "keywords": er_keywords,
+                "concepts": er_concepts,
+                "categories": er_categories,
+                "sources": er_sources,
+                "date_start": date_start,
+                "date_end": date_end,
+                "languages": languages
+            })
 
         # creates the query articles object
         q = ER.QueryEventsIter(
@@ -472,6 +521,7 @@ class EventRegistryCollector:
         max_items=-1,
         save_to_file=None,
         save_format=None,
+        verbose=False
     ):
         """Get the articles of a certain event
 
@@ -532,6 +582,17 @@ class EventRegistryCollector:
             else None
         )
         er_lang = ER.QueryItems.OR(languages) if languages else None
+
+        if verbose:
+            print_query_params({
+                "keywords": er_keywords,
+                "concepts": er_concepts,
+                "categories": er_categories,
+                "sources": er_sources,
+                "date_start": date_start,
+                "date_end": date_end,
+                "languages": languages
+            })
 
         # creates the query event articles object
         q = ER.QueryEventArticlesIter(
@@ -755,6 +816,13 @@ def main() -> None:
         help="The format in which to store the articles",
     )
 
+    subparser.add_argument(
+        "--verbose",
+        type=bool,
+        default=False,
+        help="If true, output the query parameters retrieved by ER",
+    )
+
     ###################################
     # Events Query
     ###################################
@@ -830,6 +898,13 @@ def main() -> None:
         type=str,
         default=None,
         help="The format in which to store the events",
+    )
+
+    subparser.add_argument(
+        "--verbose",
+        type=bool,
+        default=False,
+        help="If true, output the query parameters retrieved by ER",
     )
 
     ###################################
@@ -955,6 +1030,13 @@ def main() -> None:
         help="The format in which to store the event articles",
     )
 
+    subparser.add_argument(
+        "--verbose",
+        type=bool,
+        default=False,
+        help="If true, output the query parameters retrieved by ER",
+    )
+
     ###################################
     # Event Articles List Query
     ###################################
@@ -1051,6 +1133,13 @@ def main() -> None:
         help="The format in which to store the event articles",
     )
 
+    subparser.add_argument(
+        "--verbose",
+        type=bool,
+        default=False,
+        help="If true, output the query parameters retrieved by ER",
+    )
+
     try:
         # parse the arguments and call whatever function was selected
         args = argparser.parse_args()
@@ -1112,6 +1201,10 @@ def main() -> None:
             else None
         )
 
+        verbose = (
+            args.verbose if hasattr(args, "verbose") and args.verbose else None
+        )
+
         # initialize and execute query
         er = EventRegistryCollector(max_repeat_request=max_repeat_request)
 
@@ -1130,6 +1223,7 @@ def main() -> None:
                 max_items=max_items,
                 save_to_file=save_to_file,
                 save_format=save_format,
+                verbose=verbose
             )
 
         elif args.action == "events":
@@ -1147,6 +1241,7 @@ def main() -> None:
                 max_items=max_items,
                 save_to_file=save_to_file,
                 save_format=save_format,
+                verbose=verbose
             )
 
         elif args.action == "event":
@@ -1177,6 +1272,7 @@ def main() -> None:
                 max_items=max_items,
                 save_to_file=save_to_file,
                 save_format=save_format,
+                verbose=verbose
             )
 
         elif args.action == "event_articles_from_file":
@@ -1200,6 +1296,7 @@ def main() -> None:
                 max_items=max_items,
                 save_to_folder=save_to_file,
                 save_format=save_format,
+                verbose=verbose
             )
 
         else:
