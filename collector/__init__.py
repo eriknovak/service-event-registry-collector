@@ -1,0 +1,3 @@
+"""
+Event Registry Collector package.
+"""
